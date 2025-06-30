@@ -1,0 +1,67 @@
+/* Apply base style to all buttons */
+button {
+  transition: all 0.3s ease;
+  border: none;
+}
+
+/* Hover effect for all buttons */
+button:hover {
+  background-color: #00cc2c !important;
+  color: #007acc !important;
+  box-shadow: 0 0 12px rgba(0, 122, 204, 0.7);
+  cursor: pointer;
+}
+
+/* Optional: animate links that look like buttons */
+a div:hover {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+.glow-button:hover {
+  background-color: #c074ed!important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(0, 122, 204, 0.9);
+}
+
+
+/* Lift and shadow on hover for info cards */
+div.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Subtle fade-in animation for graphs */
+.dash-graph {
+  animation: fadeIn 0.8s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tile-card {
+    background-color: rgba(255, 255, 255, 0.08);
+    padding: 20px;
+    border-radius: 15px;
+    width: 220px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tile-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+a {
+    text-decoration: none !important;
+}
+
