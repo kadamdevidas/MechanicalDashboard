@@ -10,6 +10,7 @@ import os
 # Configure Gemini API key from environment variable
 # Replace "YOUR_GEMINI_API_KEY_ENV_VAR" with the actual name you'll use (e.g., "GEMINI_API_KEY")
 api_key = os.getenv("GEMINI_API_KEY") 
+
 if not api_key:
     raise ValueError("GEMINI_API_KEY environment variable not set.")
 genai.configure(api_key=api_key)
@@ -317,7 +318,7 @@ home_layout = html.Div(style={
         )
     ]),
 
-    html.Div(style={
+   html.Div(style={
     'display': 'flex',
     'justifyContent': 'center',
     'gap': '20px',
@@ -326,73 +327,91 @@ home_layout = html.Div(style={
 }, children=[
 
     # Card 1 — Maintenance Tracking
-    html.Div([
-        html.Div("⚙️", style={'fontSize': '32px', 'marginBottom': '10px', 'color': '#5e548e'}),
-        html.H4("Maintenance Tracking", style={
-            'color': '#4a4e69',
-            'margin': '10px 0 5px',
-            'fontWeight': '600'
+    dcc.Link(
+        html.Div([
+            html.Div("⚙️", style={'fontSize': '32px', 'marginBottom': '10px', 'color': '#5e548e'}),
+            html.H4("Maintenance Tracking", style={
+                'color': '#4a4e69',
+                'margin': '10px 0 5px',
+                'fontWeight': '600'
+            }),
+            html.P("Monitor preventive maintenance schedules and completion rates", style={
+                'color': '#494949',
+                'fontSize': '15px',
+                'lineHeight': '1.5'
+            })
+        ], className='card-hover', style={
+            'backgroundColor': 'rgba(255,255,255,0.1)',
+            'padding': '20px',
+            'borderRadius': '10px',
+            'minHeight': '200px', # Set a consistent minimum height
+            'border': '1px solid rgba(255, 255, 255, 0.3)',
+            'boxShadow': '0 4px 12px rgba(0, 0, 0, 0.1)',
+            'transition': 'transform 0.2s ease-in-out',
+            'display': 'flex',
+            'flexDirection': 'column'
         }),
-        html.P("Monitor preventive maintenance schedules and completion rates", style={
-            'color': '#494949',
-            'fontSize': '15px',
-            'lineHeight': '1.5'
-        })
-    ], className='card-hover', style={
-        'backgroundColor': 'rgba(255,255,255,0.1)',
-        'padding': '20px',
-        'borderRadius': '10px',
-        'width': '250px',
-        'border': '1px solid rgba(255, 255, 255, 0.3)',
-        'boxShadow': '0 4px 12px rgba(0, 0, 0, 0.1)',
-        'transition': 'transform 0.2s ease-in-out'
-    }),
+        href='/main-dashboard',
+        style={'textDecoration': 'none', 'color': 'inherit', 'width': '250px'}
+    ),
 
     # Card 2 — Audit Management
-    html.Div([
-        html.Div("🛡️", style={'fontSize': '32px', 'marginBottom': '10px', 'color': '#5e548e'}),
-        html.H4("Audit Management", style={
-            'color': '#4a4e69',
-            'margin': '10px 0 5px',
-            'fontWeight': '600'
+    dcc.Link(
+        html.Div([
+            html.Div("🛡️", style={'fontSize': '32px', 'marginBottom': '10px', 'color': '#5e548e'}),
+            html.H4("Audit Management", style={
+                'color': '#4a4e69',
+                'margin': '10px 0 5px',
+                'fontWeight': '600'
+            }),
+            html.P("Track audit points and ensure compliance standards", style={
+                'color': '#494949',
+                'fontSize': '15px',
+                'lineHeight': '1.5'
+            })
+        ], className='card-hover', style={
+            'backgroundColor': 'rgba(255,255,255,0.1)',
+            'padding': '20px',
+            'borderRadius': '10px',
+            'minHeight': '200px', # Set a consistent minimum height
+            'border': '1px solid rgba(255, 255, 255, 0.3)',
+            'boxShadow': '0 4px 12px rgba(0, 0, 0, 0.1)',
+            'transition': 'transform 0.2s ease-in-out',
+            'display': 'flex',
+            'flexDirection': 'column'
         }),
-        html.P("Track audit points and ensure compliance standards", style={
-            'color': '#494949',
-            'fontSize': '15px',
-            'lineHeight': '1.5'
-        })
-    ], className='card-hover', style={
-        'backgroundColor': 'rgba(255,255,255,0.1)',
-        'padding': '20px',
-        'borderRadius': '10px',
-        'width': '250px',
-        'border': '1px solid rgba(255, 255, 255, 0.3)',
-        'boxShadow': '0 4px 12px rgba(0, 0, 0, 0.1)',
-        'transition': 'transform 0.2s ease-in-out'
-    }),
+        href='/main-dashboard',
+        style={'textDecoration': 'none', 'color': 'inherit', 'width': '250px'}
+    ),
 
      # Card 3 — Analytics & Reporting
-    html.Div([
-        html.Div("📊", style={'fontSize': '32px', 'marginBottom': '10px', 'color': '#5e548e'}),
-        html.H4("Analytics & Reporting", style={
-            'color': '#4a4e69',
-            'margin': '10px 0 5px',
-            'fontWeight': '600'
+    dcc.Link(
+        html.Div([
+            html.Div("📊", style={'fontSize': '32px', 'marginBottom': '10px', 'color': '#5e548e'}),
+            html.H4("Analytics & Reporting", style={
+                'color': '#4a4e69',
+                'margin': '10px 0 5px',
+                'fontWeight': '600'
+            }),
+            html.P("Comprehensive breakdown analysis and performance metrics", style={
+                'color': '#494949',
+                'fontSize': '15px',
+                'lineHeight': '1.5'
+            })
+        ], className='card-hover', style={
+            'backgroundColor': 'rgba(255,255,255,0.1)',
+            'padding': '20px',
+            'borderRadius': '10px',
+            'minHeight': '200px', # Set a consistent minimum height
+            'border': '1px solid rgba(255, 255, 255, 0.3)',
+            'boxShadow': '0 4px 12px rgba(0, 0, 0, 0.1)',
+            'transition': 'transform 0.2s ease-in-out',
+            'display': 'flex',
+            'flexDirection': 'column'
         }),
-        html.P("Comprehensive breakdown analysis and performance metrics", style={
-            'color': '#494949',
-            'fontSize': '15px',
-            'lineHeight': '1.5'
-        })
-    ], className='card-hover', style={
-        'backgroundColor': 'rgba(255,255,255,0.1)',
-        'padding': '20px',
-        'borderRadius': '10px',
-        'width': '250px',
-        'border': '1px solid rgba(255, 255, 255, 0.3)',
-        'boxShadow': '0 4px 12px rgba(0, 0, 0, 0.1)',
-        'transition': 'transform 0.2s ease-in-out'
-    }),
+        href='/main-dashboard',
+        style={'textDecoration': 'none', 'color': 'inherit', 'width': '250px'}
+    ),
     
     # NEW Card 4 — Chatbot Clusters
     dcc.Link(
@@ -412,11 +431,19 @@ home_layout = html.Div(style={
             'backgroundColor': 'rgba(255,255,255,0.1)',
             'padding': '20px',
             'borderRadius': '10px',
-            'width': '250px',
+            'minHeight': '200px', # Set a consistent minimum height
             'border': '1px solid rgba(255, 255, 255, 0.3)',
             'boxShadow': '0 4px 12px rgba(0, 0, 0, 0.1)',
-            'transition': 'transform 0.2s ease-in-out'
-        }), href='/chatbot-clusters'
+            'transition': 'transform 0.2s ease-in-out',
+            'display': 'flex',
+            'flexDirection': 'column'
+        }),
+        href='/chatbot-clusters',
+        style={
+            'textDecoration': 'none',
+            'color': 'inherit',
+            'width': '250px'
+        }
     )
 ])
 ])
