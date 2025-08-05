@@ -392,8 +392,123 @@ home_layout = html.Div(style={
         'border': '1px solid rgba(255, 255, 255, 0.3)',
         'boxShadow': '0 4px 12px rgba(0, 0, 0, 0.1)',
         'transition': 'transform 0.2s ease-in-out'
-    })
+    }),
+    
+    # NEW Card 4 — Chatbot Clusters
+    dcc.Link(
+        html.Div([
+            html.Div("🤖", style={'fontSize': '32px', 'marginBottom': '10px', 'color': '#5e548e'}),
+            html.H4("Chatbot Clusters", style={
+                'color': '#4a4e69',
+                'margin': '10px 0 5px',
+                'fontWeight': '600'
+            }),
+            html.P("RAG chatbots for quick information", style={
+                'color': '#494949',
+                'fontSize': '15px',
+                'lineHeight': '1.5'
+            })
+        ], className='card-hover', style={
+            'backgroundColor': 'rgba(255,255,255,0.1)',
+            'padding': '20px',
+            'borderRadius': '10px',
+            'width': '250px',
+            'border': '1px solid rgba(255, 255, 255, 0.3)',
+            'boxShadow': '0 4px 12px rgba(0, 0, 0, 0.1)',
+            'transition': 'transform 0.2s ease-in-out'
+        }), href='/chatbot-clusters'
+    )
 ])
+])
+
+# CHATBOT CLUSTERS LAYOUT
+chatbot_clusters_layout = html.Div(style={
+    'backgroundImage': 'linear-gradient(to top, #c1e4f0 0%, #e0f2f7 100%)',
+    'minHeight': '100vh',
+    'padding': '50px',
+    'color': '#333',
+    'fontFamily': 'Segoe UI, sans-serif',
+    'textAlign': 'center'
+}, children=[
+    dcc.Link(
+        html.Div("🏠", style={ 
+            'fontSize': '30px',
+            'position': 'absolute',
+            'top': '20px',
+            'right': '30px',
+            'cursor': 'pointer',
+            'zIndex': '10',
+            'color': '#4b0082',
+            'textShadow': '1px 1px 2px rgba(0,0,0,0.2)'
+        }),
+        href='/',
+        style={'textDecoration': 'none'}
+    ),
+    html.H2("Chatbot Clusters", style={
+        'fontSize': '36px',
+        'fontWeight': 'bold',
+        'marginBottom': '30px',
+        'color': '#4b0082'
+    }),
+    html.P("Select a chatbot for quick information retrieval.", style={
+        'fontSize': '18px',
+        'marginBottom': '40px'
+    }),
+    html.Div(style={
+        'display': 'flex',
+        'justifyContent': 'center',
+        'gap': '20px',
+        'flexWrap': 'wrap'
+    }, children=[
+        # OISD RAG Chatbot tile
+        html.A(
+            html.Div([
+                html.Div("📚", style={'fontSize': '32px', 'marginBottom': '10px'}),
+                html.H4("OISD RAG Chatbot", style={'margin': 0}),
+                html.P("Information on Oil Industry Safety Directorate guidelines")
+            ], className='card-hover', style={
+                'backgroundColor': '#ffffff',
+                'padding': '20px',
+                'width': '250px',
+                'borderRadius': '12px',
+                'boxShadow': '0 4px 10px rgba(0,0,0,0.1)',
+                'cursor': 'pointer',
+                'transition': 'transform 0.2s ease',
+                'textAlign': 'center'
+            }),
+            href='https://huggingface.co/spaces/okadam1112/oisd-rag-chatbot',
+            target='_blank',
+            style={'textDecoration': 'none', 'color': 'inherit'}
+        ),
+        # HR RAG Chatbot tile
+        html.Div([
+            html.Div("👤", style={'fontSize': '32px', 'marginBottom': '10px'}),
+            html.H4("HR RAG Chatbot", style={'margin': 0}),
+            html.P("RAG chatbot for HR-related queries")
+        ], className='card-hover', style={
+            'backgroundColor': '#ffffff',
+            'padding': '20px',
+            'width': '250px',
+            'borderRadius': '12px',
+            'boxShadow': '0 4px 10px rgba(0,0,0,0.1)',
+            'transition': 'transform 0.2s ease',
+            'textAlign': 'center'
+        }),
+        # C&P RAG Chatbot tile
+        html.Div([
+            html.Div("💰", style={'fontSize': '32px', 'marginBottom': '10px'}),
+            html.H4("C&P RAG Chatbot", style={'margin': 0}),
+            html.P("RAG chatbot for contracts and procurement information")
+        ], className='card-hover', style={
+            'backgroundColor': '#ffffff',
+            'padding': '20px',
+            'width': '250px',
+            'borderRadius': '12px',
+            'boxShadow': '0 4px 10px rgba(0,0,0,0.1)',
+            'transition': 'transform 0.2s ease',
+            'textAlign': 'center'
+        })
+    ])
 ])
 
 
@@ -612,7 +727,7 @@ def create_sheet_layout(sheet_name, id_prefix):
         ),
         html.H2(f'{sheet_name}', style={
             'textAlign': 'center',
-            'padding': '20px',
+            'padding': '20-x',
             'backgroundImage': 'linear-gradient(to right, #4CAF50, #8BC34A)', # Green gradient
             'color': 'white',
             'borderRadius': '10px',
@@ -725,25 +840,22 @@ def generate_gatepass_month_buttons(pathname):
     if pathname == '/gatepass':
         return generate_month_buttons(gate_pass_df, 'gatepass')
 
-
 # Update graphs for PM01 and PM02 (re-used for consistent bar charts)
 def update_pm_graphs(sheet_df, prefix):
     @app.callback(
-        [Output(f'btn-{prefix}-{month}', 'style') for month in sheet_df['Month'].unique()] +
-        [Output(f'{prefix}-graphs', 'children')],
+        [Output(f'btn-{prefix}-{month}', 'style') for month in sheet_df['Month'].unique()] + [Output(f'{prefix}-graphs', 'children')],
         [Input(f'btn-{prefix}-{month}', 'n_clicks') for month in sheet_df['Month'].unique()]
     )
     def update_sheet_graphs(*clicked_buttons):
         months_clicked = []
         styles = []
         graphs = []
-
         for i, month in enumerate(sheet_df['Month'].unique()):
-            if clicked_buttons[i] % 2 == 1:  # Selected
+            if clicked_buttons[i] % 2 == 1: # Selected
                 months_clicked.append(month)
-                styles.append(selected_month_button_style)  # Keep green background
-            else:  # Deselected
-                styles.append(deselected_month_button_style)  # Turn to black background
+                styles.append(selected_month_button_style) # Keep green background
+            else: # Deselected
+                styles.append(deselected_month_button_style) # Turn to black background
 
         # Generate graphs for the selected months
         # Defined gradient-like colors for PM graphs
@@ -754,18 +866,27 @@ def update_pm_graphs(sheet_df, prefix):
             month_data = sheet_df[sheet_df['Month'] == month]
             fig = go.Figure()
             fig.add_trace(go.Bar(
-                x=month_data['Plant'], y=month_data['Planned'], name='Planned',
-                marker_color=planned_colors[i % len(planned_colors)], text=month_data['Planned'], textposition='auto'
+                x=month_data['Plant'],
+                y=month_data['Planned'],
+                name='Planned',
+                marker_color=planned_colors[i % len(planned_colors)],
+                text=month_data['Planned'],
+                textposition='auto'
             ))
             fig.add_trace(go.Bar(
-                x=month_data['Plant'], y=month_data['Executed'], name='Executed',
-                marker_color=executed_colors[i % len(executed_colors)], text=month_data['Executed'], textposition='auto'
+                x=month_data['Plant'],
+                y=month_data['Executed'],
+                name='Executed',
+                marker_color=executed_colors[i % len(executed_colors)],
+                text=month_data['Executed'],
+                textposition='auto'
             ))
+
             fig.update_layout(
                 title={
                     'text': f'{prefix.upper()}: Planned vs Executed Jobs ({month})',
                     'font': {'size': 24, 'color': '#333', 'family': 'Arial'},
-                    'x': 0.5, # Center the title
+                    'x': 0.5,  # Center the title
                     'xanchor': 'center'
                 },
                 barmode='group',
@@ -774,621 +895,275 @@ def update_pm_graphs(sheet_df, prefix):
                 plot_bgcolor='#f9f9f9',
                 font=dict(family="Arial", size=12, color="#7f7f7f"),
                 margin=dict(l=40, r=40, t=60, b=40), # Increased top margin for title
-                legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5) # Positioned below plot
+                legend=dict(
+                    x=0.5,
+                    y=1.1,
+                    xanchor='center',
+                    yanchor='top',
+                    orientation='h'
+                )
             )
-            graphs.append(html.Div(dcc.Graph(figure=fig), style={'display': 'inline-block', 'margin': '10px'}))
 
+            graphs.append(dcc.Graph(figure=fig, style={'width': '48%', 'margin': '10px'})) # Added margin
+        
         return styles + [graphs]
 
-# Update Breakdown graphs and tables
-@app.callback(
-    [Output(f'btn-breakdown-{month}', 'style') for month in breakdown_df['Month'].unique()] +
-    [Output('breakdown-graphs', 'children'), Output('breakdown-tables', 'children')],
-    [Input(f'btn-breakdown-{month}', 'n_clicks') for month in breakdown_df['Month'].unique()]
-)
-def update_breakdown_maintenance(*clicked_buttons):
-    months_clicked = []
-    styles = []
-    graphs = []
-    tables = []
+update_pm_graphs(pm01_df, 'pm01')
+update_pm_graphs(pm02_df, 'pm02')
+update_pm_graphs(breakdown_df, 'breakdown')
+update_pm_graphs(shutdown_df, 'shutdown')
 
-    for i, month in enumerate(breakdown_df['Month'].unique()):
-        if clicked_buttons[i] % 2 == 1:  # Selected
-            months_clicked.append(month)
-            styles.append(selected_month_button_style)  # Keep green background
-        else:  # Deselected
-            styles.append(deselected_month_button_style)  # Turn to black background
-
-    # Generate graphs and tables for the selected months
-    breakdown_colors = ['#FF6F00', '#FF9800', '#FFB74D', '#FFE082', '#FFECB3'] # Orange gradient
-    for i, month in enumerate(months_clicked):
-        month_data = breakdown_df[breakdown_df['Month'] == month]
-
-        # Generate Bar Chart for Breakdown Jobs
-        fig = go.Figure()
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['No. of Breakdown Jobs'], name='Breakdown Jobs',
-            marker_color=breakdown_colors[i % len(breakdown_colors)], text=month_data['No. of Breakdown Jobs'], textposition='auto'
-        ))
-        fig.update_layout(
-            title={
-                'text': f'Breakdown Jobs ({month})',
-                'font': {'size': 24, 'color': '#333', 'family': 'Arial'},
-                'x': 0.5,
-                'xanchor': 'center'
-            },
-            barmode='group',
-            height=400, # Increased height
-            width=600,  # Increased width
-            plot_bgcolor='#f9f9f9',
-            font=dict(family="Arial", size=12, color="#7f7f7f"),
-            margin=dict(l=40, r=40, t=60, b=40), # Increased top margin for title
-            legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5) # Positioned below plot
-        )
-        graphs.append(html.Div(dcc.Graph(figure=fig), style={'display': 'inline-block', 'margin': '10px'}))
-
-        # Generate Table for Short Description with better styling
-        table_rows = []
-        for j, row in month_data.iterrows():
-            table_rows.append(html.Tr([
-                html.Td(j + 1, style={'padding': '10px', 'border': '1px solid #ddd'}),
-                html.Td(row['Plant'], style={'padding': '10px', 'border': '1px solid #ddd'}),
-                html.Td(row['Short description of the job'] if not pd.isna(row['Short description of the job']) else '',
-                        style={'padding': '10px', 'border': '1px solid #ddd'})
-            ], style={'backgroundColor': '#f9f9f9' if j % 2 == 0 else '#e0e0e0'}))  # Alternating row colors
-
-        tables.append(html.Div([
-            html.H3(f'{month} Breakdown Maintenance Jobs', style={'color': '#333'}),
-            html.Table([
-                html.Thead(html.Tr([
-                    html.Th('S.No.', style={'padding': '10px', 'border': '1px solid #ddd', 'backgroundColor': '#d3a15d', 'color': 'white'}),
-                    html.Th('Plant', style={'padding': '10px', 'border': '1px solid #ddd', 'backgroundColor': '#d3a15d', 'color': 'white'}),
-                    html.Th('Short description of the job', style={'padding': '10px', 'border': '1px solid #ddd', 'backgroundColor': '#d3a15d', 'color': 'white'})
-                ])),
-                html.Tbody(table_rows)
-            ], style={'width': '80%', 'margin': '20px auto', 'border': '1px solid #ddd', 'borderCollapse': 'collapse',
-                      'textAlign': 'center', 'borderSpacing': '0px', 'fontFamily': 'Arial', 'boxShadow': '0 2px 5px rgba(0,0,0,0.1)'})
-        ], style={'padding': '20px'}))
-
-    return styles + [graphs, tables]
-
-# Update Shutdown Jobs graphs and tables
-@app.callback(
-    [Output(f'btn-shutdown-{month}', 'style') for month in shutdown_df['Month'].unique()] +
-    [Output('shutdown-graphs', 'children'), Output('shutdown-tables', 'children')],
-    [Input(f'btn-shutdown-{month}', 'n_clicks') for month in shutdown_df['Month'].unique()]
-)
-def update_shutdown_jobs(*clicked_buttons):
-    months_clicked = []
-    styles = []
-    graphs = []
-    tables = []
-
-    for i, month in enumerate(shutdown_df['Month'].unique()):
-        if clicked_buttons[i] % 2 == 1:  # Selected
-            months_clicked.append(month)
-            styles.append(selected_month_button_style)  # Keep green background
-        else:  # Deselected
-            styles.append(deselected_month_button_style)  # Turn to black background
-
-    # Generate graphs and tables for the selected months
-    shutdown_colors = ['#00BCD4', '#4DD0E1', '#80DEEA', '#B2EBF2', '#E0F7FA'] # Cyan gradient
-    for i, month in enumerate(months_clicked):
-        month_data = shutdown_df[shutdown_df['Month'] == month]
-
-        # Generate Bar Chart for Jobs Hold for Shutdown
-        fig = go.Figure()
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['No. of Jobs hold'], name='Jobs Hold',
-            marker_color=shutdown_colors[i % len(shutdown_colors)], text=month_data['No. of Jobs hold'], textposition='auto'
-        ))
-        fig.update_layout(
-            title={
-                'text': f'Shutdown Jobs ({month})',
-                'font': {'size': 24, 'color': '#333', 'family': 'Arial'},
-                'x': 0.5,
-                'xanchor': 'center'
-            },
-            barmode='group',
-            height=400, # Increased height
-            width=600,  # Increased width
-            plot_bgcolor='#f9f9f9',
-            font=dict(family="Arial", size=12, color="#7f7f7f"),
-            margin=dict(l=40, r=40, t=60, b=40), # Increased top margin for title
-            legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5) # Positioned below plot
-        )
-        graphs.append(html.Div(dcc.Graph(figure=fig), style={'display': 'inline-block', 'margin': '10px'}))
-
-        # Generate Table for Short Description with better styling
-        table_rows = []
-        for j, row in month_data.iterrows():
-            table_rows.append(html.Tr([
-                html.Td(j + 1, style={'padding': '10px', 'border': '1px solid #ddd'}),
-                html.Td(row['Plant'], style={'padding': '10px', 'border': '1px solid #ddd'}),
-                html.Td(row['Short description of the job'] if not pd.isna(row['Short description of the job']) else '',
-                        style={'padding': '10px', 'border': '1px solid #ddd'})
-            ], style={'backgroundColor': '#f9f9f9' if j % 2 == 0 else '#e0e0e0'}))  # Alternating row colors
-
-        tables.append(html.Div([
-            html.H3(f'{month} Jobs Hold for Shutdown', style={'color': '#333'}),
-            html.Table([
-                html.Thead(html.Tr([
-                    html.Th('S.No.', style={'padding': '10px', 'border': '1px solid #ddd', 'backgroundColor': '#d3a15d', 'color': 'white'}),
-                    html.Th('Plant', style={'padding': '10px', 'border': '1px solid #ddd', 'backgroundColor': '#d3a15d', 'color': 'white'}),
-                    html.Th('Short description of the job', style={'padding': '10px', 'border': '1px solid #ddd', 'backgroundColor': '#d3a15d', 'color': 'white'})
-                ])),
-                html.Tbody(table_rows)
-            ], style={'width': '80%', 'margin': '20px auto', 'border': '1px solid #ddd', 'borderCollapse': 'collapse',
-                      'textAlign': 'center', 'borderSpacing': '0px', 'fontFamily': 'Arial', 'boxShadow': '0 2px 5px rgba(0,0,0,0.1)'})
-        ], style={'padding': '20px'}))
-
-    return styles + [graphs, tables]
-
-# Update Vibration Monitoring graphs
+# Vibration Monitoring Graphs
 @app.callback(
     [Output(f'btn-vibration-{month}', 'style') for month in vibration_df['Month'].unique()] +
     [Output('vibration-graphs', 'children')],
     [Input(f'btn-vibration-{month}', 'n_clicks') for month in vibration_df['Month'].unique()]
 )
-def update_vibration_monitoring(*clicked_buttons):
+def update_vibration_graphs(*clicked_buttons):
     months_clicked = []
     styles = []
     graphs = []
-
     for i, month in enumerate(vibration_df['Month'].unique()):
-        if clicked_buttons[i] % 2 == 1:  # Selected
+        if clicked_buttons[i] % 2 == 1:
             months_clicked.append(month)
-            styles.append(selected_month_button_style)  # Keep green background
-        else:  # Deselected
-            styles.append(deselected_month_button_style)  # Turn to black background
-
-    # Generate graphs for the selected months
-    vibration_colors = {
-        'Scheduled Equipment': '#3F51B5', # Indigo
-        'Monitored Equipment': '#2196F3', # Blue
-        'Normal Health Equipment': '#4CAF50', # Green
-        'Critical Health Equipment': '#F44336', # Red
-        'Health Index (%)': '#FFC107', # Amber
-        'Critical Index (%)': '#9C27B0' # Purple
+            styles.append(selected_month_button_style)
+        else:
+            styles.append(deselected_month_button_style)
+    
+    health_colors = {
+        'Critical': '#FF5733', # Red
+        'Alert': '#FFC300',    # Orange
+        'Normal': '#33FF57',   # Green
+        'No Data': '#D3D3D3'   # Grey
     }
 
-    for i, month in enumerate(months_clicked):
+    for month in months_clicked:
         month_data = vibration_df[vibration_df['Month'] == month]
+        plant_data = month_data.groupby('Plant')['Health'].value_counts().unstack(fill_value=0)
+        
+        # Ensure all health categories are present to avoid key errors
+        for health_status in health_colors.keys():
+            if health_status not in plant_data.columns:
+                plant_data[health_status] = 0
+        
+        # Calculate percentages
+        plant_data_percent = plant_data.div(plant_data.sum(axis=1), axis=0) * 100
+        plant_data_percent = plant_data_percent.round(2)
 
-        # Generate Bar Chart for Vibration Monitoring Jobs
-        fig = go.Figure()
+        fig_percent = go.Figure()
+        for health_status, color in health_colors.items():
+            if health_status in plant_data_percent.columns:
+                fig_percent.add_trace(go.Bar(
+                    x=plant_data_percent.index,
+                    y=plant_data_percent[health_status],
+                    name=health_status,
+                    marker_color=color
+                ))
 
-        # Left Y-axis (Equipment-related counts)
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['No. of Equipment Scheduled'], name='Scheduled Equipment',
-            marker_color=vibration_colors['Scheduled Equipment'], text=month_data['No. of Equipment Scheduled'], textposition='auto'
-        ))
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['No. of Equipment Monitored (Executed)'], name='Monitored Equipment',
-            marker_color=vibration_colors['Monitored Equipment'], text=month_data['No. of Equipment Monitored (Executed)'], textposition='auto'
-        ))
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['No. of Equipment With Normal Health'], name='Normal Health Equipment',
-            marker_color=vibration_colors['Normal Health Equipment'], text=month_data['No. of Equipment With Normal Health'], textposition='auto'
-        ))
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['No. of Equipment With Critical Health'], name='Critical Health Equipment',
-            marker_color=vibration_colors['Critical Health Equipment'], text=month_data['No. of Equipment With Critical Health'], textposition='auto'
-        ))
-
-        # Right Y-axis (Percentage-related data)
-        fig.add_trace(go.Scatter(
-            x=month_data['Plant'], y=month_data['Health Index'] * 100, name='Health Index (%)',
-            marker_color=vibration_colors['Health Index (%)'], yaxis='y2', mode='lines+markers', text=month_data['Health Index'] * 100, textposition='top center'
-        ))
-        fig.add_trace(go.Scatter(
-            x=month_data['Plant'], y=month_data['Critical Index'] * 100, name='Critical Index (%)',
-            marker_color=vibration_colors['Critical Index (%)'], yaxis='y2', mode='lines+markers', text=month_data['Critical Index'] * 100, textposition='top center'
-        ))
-
-        # Update layout for dual-axis graph
-        fig.update_layout(
+        fig_percent.update_layout(
+            barmode='stack',
             title={
-                'text': f'Vibration Monitoring ({month})',
+                'text': f'Equipment Health Status by Plant (Percentage) - {month}',
                 'font': {'size': 24, 'color': '#333', 'family': 'Arial'},
                 'x': 0.5,
                 'xanchor': 'center'
             },
-            barmode='group',
-            height=450, # Increased height
-            width=750,  # Increased width
+            height=600,
+            width=900,
+            xaxis_title="Plant",
+            yaxis_title="Percentage of Equipment",
+            yaxis_tickformat=".0f",
             plot_bgcolor='#f9f9f9',
-            xaxis=dict(title='Plant'),
-            yaxis=dict(title='Equipment Count'),
-            yaxis2=dict(title='Percentage (%)', overlaying='y', side='right', range=[0,100]), # Ensure percentage is 0-100
-            legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5), # Positioned below plot
-            margin=dict(l=40, r=40, t=60, b=40), # Increased top margin for title
-            font=dict(family="Arial", size=12, color="#7f7f7f")
+            font=dict(family="Arial", size=12, color="#7f7f7f"),
+            legend=dict(
+                x=0.5, y=1.1, xanchor='center', yanchor='top', orientation='h'
+            ),
+            margin=dict(l=40, r=40, t=80, b=40),
+            hovermode='x unified'
         )
-
-        graphs.append(html.Div(dcc.Graph(figure=fig), style={'display': 'inline-block', 'margin': '10px'}))
-
+        graphs.append(dcc.Graph(figure=fig_percent, style={'width': '90%', 'margin': '20px auto'}))
+    
     return styles + [graphs]
 
-# New: Update Lube Oil Analysis graphs
+# Lube Oil Analysis Graphs
 @app.callback(
     [Output(f'btn-lubeoil-{month}', 'style') for month in lube_oil_df['Month'].unique()] +
-    [Output('lubeoil-graphs', 'children'), Output('lubeoil-tables', 'children')], # Added tables output
+    [Output('lubeoil-graphs', 'children')],
     [Input(f'btn-lubeoil-{month}', 'n_clicks') for month in lube_oil_df['Month'].unique()]
 )
-def update_lube_oil_analysis(*clicked_buttons):
+def update_lubeoil_graphs(*clicked_buttons):
     months_clicked = []
     styles = []
     graphs = []
-    tables = []
-
     for i, month in enumerate(lube_oil_df['Month'].unique()):
         if clicked_buttons[i] % 2 == 1:
             months_clicked.append(month)
             styles.append(selected_month_button_style)
         else:
             styles.append(deselected_month_button_style)
-
-    lube_oil_colors_scheduled = ['#1f77b4', '#4D7C8A', '#7A8C8C', '#A89CAE', '#D6ACB0'] # Blue-ish gradient
-    lube_oil_colors_analysed = ['#ff7f0e', '#FF9A4E', '#FFB58E', '#FFD0CE', '#FFEBEF'] # Orange-ish gradient
-
-    for i, month in enumerate(months_clicked):
+    
+    for month in months_clicked:
         month_data = lube_oil_df[lube_oil_df['Month'] == month]
-
-        # Graph 1: Scheduled vs Analyzed Samples
-        fig1 = go.Figure()
-        fig1.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['No. Scheduled for Analysis'], name='Scheduled for Analysis',
-            marker_color=lube_oil_colors_scheduled[i % len(lube_oil_colors_scheduled)], text=month_data['No. Scheduled for Analysis'], textposition='auto'
-        ))
-        fig1.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['No Samples analysed'], name='Samples Analysed',
-            marker_color=lube_oil_colors_analysed[i % len(lube_oil_colors_analysed)], text=month_data['No Samples analysed'], textposition='auto'
-        ))
-        fig1.update_layout(
-            title={
-                'text': f'Lube Oil Analysis: Scheduled vs Analysed Samples ({month})',
-                'font': {'size': 24, 'color': '#333', 'family': 'Arial'},
-                'x': 0.5,
-                'xanchor': 'center'
-            },
-            barmode='group',
-            height=400, # Increased height
-            width=600, # Increased width
+        
+        # Moisture Trend
+        fig_moisture = go.Figure()
+        fig_moisture.add_trace(go.Scatter(x=month_data['Equipment'], y=month_data['Moisture (%)'], mode='markers+lines', name='Moisture (%)', marker=dict(color='blue')))
+        fig_moisture.update_layout(
+            title=f'Monthly Lube Oil Analysis - Moisture Content ({month})',
+            xaxis_title='Equipment',
+            yaxis_title='Moisture (%)',
+            height=400,
+            width=800,
             plot_bgcolor='#f9f9f9',
-            font=dict(family="Arial", size=12, color="#7f7f7f"),
-            margin=dict(l=40, r=40, t=60, b=40), # Increased top margin for title
-            legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5) # Positioned below plot
+            margin=dict(t=40)
         )
-        graphs.append(html.Div(dcc.Graph(figure=fig1), style={'display': 'inline-block', 'margin': '10px'}))
+        graphs.append(dcc.Graph(figure=fig_moisture, style={'width': '48%', 'margin': '10px'}))
 
-        # Table for Corrective Actions
-        table_rows = []
-        for j, row in month_data.iterrows():
-            table_rows.append(html.Tr([
-                html.Td(row['Plant'], style={'padding': '10px', 'border': '1px solid #ddd'}),
-                html.Td(row['Corrective Actions Required'] if not pd.isna(row['Corrective Actions Required']) else '',
-                        style={'padding': '10px', 'border': '1px solid #ddd'}),
-                html.Td(row['Corrective Actions Taken'] if not pd.isna(row['Corrective Actions Taken']) else '',
-                        style={'padding': '10px', 'border': '1px solid #ddd'})
-            ], style={'backgroundColor': '#f9f9f9' if j % 2 == 0 else '#e0e0e0'}))
-
-        tables.append(html.Div([
-            html.H3(f'{month} Lube Oil Analysis Corrective Actions', style={'color': '#333'}),
-            html.Table([
-                html.Thead(html.Tr([
-                    html.Th('Plant', style={'padding': '10px', 'border': '1px solid #ddd', 'backgroundColor': '#d3a15d', 'color': 'white'}),
-                    html.Th('Corrective Actions Required', style={'padding': '10px', 'border': '1px solid #ddd', 'backgroundColor': '#d3a15d', 'color': 'white'}),
-                    html.Th('Corrective Actions Taken', style={'padding': '10px', 'border': '1px solid #ddd', 'backgroundColor': '#d3a15d', 'color': 'white'})
-                ])),
-                html.Tbody(table_rows)
-            ], style={'width': '80%', 'margin': '20px auto', 'border': '1px solid #ddd', 'borderCollapse': 'collapse',
-                      'textAlign': 'center', 'borderSpacing': '0px', 'fontFamily': 'Arial', 'boxShadow': '0 2px 5px rgba(0,0,0,0.1)'})
-        ], style={'padding': '20px'}))
-
-    return styles + [graphs, tables]
+        # Viscosity Trend
+        fig_viscosity = go.Figure()
+        fig_viscosity.add_trace(go.Scatter(x=month_data['Equipment'], y=month_data['Viscosity (cSt)'], mode='markers+lines', name='Viscosity (cSt)', marker=dict(color='orange')))
+        fig_viscosity.update_layout(
+            title=f'Monthly Lube Oil Analysis - Viscosity ({month})',
+            xaxis_title='Equipment',
+            yaxis_title='Viscosity (cSt)',
+            height=400,
+            width=800,
+            plot_bgcolor='#f9f9f9',
+            margin=dict(t=40)
+        )
+        graphs.append(dcc.Graph(figure=fig_viscosity, style={'width': '48%', 'margin': '10px'}))
+    
+    return styles + [graphs]
 
 
-# New: Update Spares Management graphs and tables
+# Spares Management Table
 @app.callback(
     [Output(f'btn-spares-{month}', 'style') for month in spares_df['Month'].unique()] +
-    [Output('spares-graphs', 'children')], # No separate tables div, data shown in text or chart directly
+    [Output('spares-tables', 'children')],
     [Input(f'btn-spares-{month}', 'n_clicks') for month in spares_df['Month'].unique()]
 )
-def update_spares_management(*clicked_buttons):
+def update_spares_table(*clicked_buttons):
     months_clicked = []
     styles = []
-    graphs = []
-
+    tables = []
     for i, month in enumerate(spares_df['Month'].unique()):
         if clicked_buttons[i] % 2 == 1:
             months_clicked.append(month)
             styles.append(selected_month_button_style)
         else:
             styles.append(deselected_month_button_style)
-
-    spares_bar_colors = ['#6dd5ed', '#2193b0'] # Light and dark blue
-    spares_line_colors = ['#ff6f00', '#9467bd'] # Amber and purple
-
-    for i, month in enumerate(months_clicked):
+    
+    for month in months_clicked:
         month_data = spares_df[spares_df['Month'] == month]
-
-        # Create a combined bar chart for Indents Scheduled and PR Raised
-        fig = go.Figure()
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['Indents Scheduled for Review in this month'], name='Indents Scheduled (This Month)',
-            marker_color=spares_bar_colors[0], text=month_data['Indents Scheduled for Review in this month'], textposition='auto'
-        ))
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['No. of PR Raised in this month'], name='PR Raised (This Month)',
-            marker_color=spares_bar_colors[1], text=month_data['No. of PR Raised in this month'], textposition='auto'
-        ))
         
-        # Add cumulative data as lines
-        fig.add_trace(go.Scatter(
-            x=month_data['Plant'], y=month_data['Cumul. No. of Indents Scheduled for Review till this month in F.Y. 24-25'], 
-            mode='lines+markers', name='Cumulative Indents (FY 24-25)', marker_color=spares_line_colors[0],
-            text=month_data['Cumul. No. of Indents Scheduled for Review till this month in F.Y. 24-25'], textposition='top center'
-        ))
-        fig.add_trace(go.Scatter(
-            x=month_data['Plant'], y=month_data['Cumul. No. of PR Raised till this month in F.Y. 24-25'], 
-            mode='lines+markers', name='Cumulative PR Raised (FY 24-25)', marker_color=spares_line_colors[1],
-            text=month_data['Cumul. No. of PR Raised till this month in F.Y. 24-25'], textposition='top center'
-        ))
-
-        fig.update_layout(
-            title={
-                'text': f'Spares Management KPIs ({month})',
-                'font': {'size': 24, 'color': '#333', 'family': 'Arial'},
-                'x': 0.5,
-                'xanchor': 'center'
-            },
-            barmode='group',
-            height=500, 
-            width=750, 
-            plot_bgcolor='#f9f9f9',
-            font=dict(family="Arial", size=12, color="#7f7f7f"),
-            margin=dict(l=40, r=40, t=60, b=40), # Increased top margin for title
-            legend=dict(orientation="h", yanchor="top", y=-0.2, xanchor="center", x=0.5) # Positioned below plot
+        table = html.Div(
+            [
+                html.H4(f'Spares Management Details ({month})', style={'margin-top': '20px'}),
+                html.Table([
+                    html.Thead(html.Tr([html.Th(col) for col in month_data.columns])),
+                    html.Tbody([
+                        html.Tr([
+                            html.Td(month_data.iloc[i][col]) for col in month_data.columns
+                        ]) for i in range(len(month_data))
+                    ])
+                ], style={'width': '100%', 'border-collapse': 'collapse', 'margin-top': '10px'})
+            ]
         )
-        graphs.append(html.Div(dcc.Graph(figure=fig), style={'display': 'inline-block', 'margin': '10px'}))
+        tables.append(table)
+    
+    return styles + [tables]
 
-    return styles + [graphs]
-
-
-# New: Update Running Contracts graphs and tables
+# Running Contracts Table
 @app.callback(
     [Output(f'btn-contracts-{month}', 'style') for month in contracts_df['Month'].unique()] +
-    [Output('contracts-graphs', 'children')],
+    [Output('contracts-tables', 'children')],
     [Input(f'btn-contracts-{month}', 'n_clicks') for month in contracts_df['Month'].unique()]
 )
-def update_running_contracts(*clicked_buttons):
+def update_contracts_table(*clicked_buttons):
     months_clicked = []
     styles = []
-    graphs = []
-
+    tables = []
     for i, month in enumerate(contracts_df['Month'].unique()):
         if clicked_buttons[i] % 2 == 1:
             months_clicked.append(month)
             styles.append(selected_month_button_style)
         else:
             styles.append(deselected_month_button_style)
-
-    contracts_colors = {
-        'Total Running Contracts': '#2ca02c', # Green
-        'Contracts for Renewal': '#d62728', # Red
-        'Contracts Expired (Not Renewed)': '#9467bd' # Purple
-    }
-
-    for i, month in enumerate(months_clicked):
+    
+    for month in months_clicked:
         month_data = contracts_df[contracts_df['Month'] == month]
-
-        # Graph: Total, Renewing, Expired Contracts
-        fig = go.Figure()
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['Total Current Running Contracts'], name='Total Running Contracts',
-            marker_color=contracts_colors['Total Running Contracts'], text=month_data['Total Current Running Contracts'], textposition='auto'
-        ))
-        # Corrected column name with a single space
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['Contracts requiring Renewal (& expiring in this/next six months)'], name='Contracts for Renewal', # Cleaned name
-            marker_color=contracts_colors['Contracts for Renewal'], text=month_data['Contracts requiring Renewal (& expiring in this/next six months)'], textposition='auto' # Cleaned name
-        ))
-        fig.add_trace(go.Bar(
-            x=month_data['Plant'], y=month_data['Contracts Expired in this month (& not requiring renewal)'], name='Contracts Expired (Not Renewed)',
-            marker_color=contracts_colors['Contracts Expired (Not Renewed)'], text=month_data['Contracts Expired in this month (& not requiring renewal)'], textposition='auto'
-        ))
-
-        fig.update_layout(
-            title={
-                'text': f'Running Contracts Status ({month})',
-                'font': {'size': 24, 'color': '#333', 'family': 'Arial'},
-                'x': 0.5,
-                'xanchor': 'center'
-            },
-            barmode='group',
-            height=450, # Increased height
-            width=700, 
-            plot_bgcolor='#f9f9f9',
-            font=dict(family="Arial", size=12, color="#7f7f7f"),
-            margin=dict(l=40, r=40, t=60, b=40), # Increased top margin for title
-            legend=dict(orientation="h", yanchor="top", y=-0.2, xanchor="center", x=0.5) # Positioned below plot
+        
+        table = html.Div(
+            [
+                html.H4(f'Running Contracts ({month})', style={'margin-top': '20px'}),
+                html.Table([
+                    html.Thead(html.Tr([html.Th(col) for col in month_data.columns])),
+                    html.Tbody([
+                        html.Tr([
+                            html.Td(month_data.iloc[i][col]) for col in month_data.columns
+                        ]) for i in range(len(month_data))
+                    ])
+                ], style={'width': '100%', 'border-collapse': 'collapse', 'margin-top': '10px'})
+            ]
         )
-        graphs.append(html.Div(dcc.Graph(figure=fig), style={'display': 'inline-block', 'margin': '10px'}))
+        tables.append(table)
+    
+    return styles + [tables]
 
-    return styles + [graphs]
-
-
-# New: Update Gate Pass Details graphs and tables
+# Gate Pass Details Table
 @app.callback(
     [Output(f'btn-gatepass-{month}', 'style') for month in gate_pass_df['Month'].unique()] +
-    [Output('gatepass-graphs', 'children')],
+    [Output('gatepass-tables', 'children')],
     [Input(f'btn-gatepass-{month}', 'n_clicks') for month in gate_pass_df['Month'].unique()]
 )
-def update_gate_pass_details(*clicked_buttons):
+def update_gatepass_table(*clicked_buttons):
     months_clicked = []
     styles = []
-    graphs = []
-
+    tables = []
     for i, month in enumerate(gate_pass_df['Month'].unique()):
         if clicked_buttons[i] % 2 == 1:
             months_clicked.append(month)
             styles.append(selected_month_button_style)
         else:
             styles.append(deselected_month_button_style)
-
-    gate_pass_colors = {
-        'New Gate Pass': '#17becf', # Teal
-        'Open from Last Month': '#8c564b', # Brown
-        'Closed this Month': '#e377c2', # Pink
-        'Total Open Current': '#7f7f7f' # Gray
-    }
-
-    for i, month in enumerate(months_clicked):
+    
+    for month in months_clicked:
         month_data = gate_pass_df[gate_pass_df['Month'] == month]
-
-        # Graph: New, Open, Closed, Total Open Gate Passes
-        fig = go.Figure()
-        fig.add_trace(go.Bar(
-            x=month_data['plant'], y=month_data['New Gate Pass Created in this month'], name='New Gate Pass',
-            marker_color=gate_pass_colors['New Gate Pass'], text=month_data['New Gate Pass Created in this month'], textposition='auto'
-        ))
-        fig.add_trace(go.Bar(
-            x=month_data['plant'], y=month_data['Gate Pass open till last month'], name='Open from Last Month',
-            marker_color=gate_pass_colors['Open from Last Month'], text=month_data['Gate Pass open till last month'], textposition='auto'
-        ))
-        fig.add_trace(go.Bar(
-            x=month_data['plant'], y=month_data['Gate Pass Closed in this month'], name='Closed this Month',
-            marker_color=gate_pass_colors['Closed this Month'], text=month_data['Gate Pass Closed in this month'], textposition='auto'
-        ))
-        fig.add_trace(go.Bar(
-            x=month_data['plant'], y=month_data['Total current open Gate Pass'], name='Total Open Current',
-            marker_color=gate_pass_colors['Total Open Current'], text=month_data['Total current open Gate Pass'], textposition='auto'
-        ))
-
-        fig.update_layout(
-            title={
-                'text': f'Gate Pass Details ({month})',
-                'font': {'size': 24, 'color': '#333', 'family': 'Arial'},
-                'x': 0.5,
-                'xanchor': 'center'
-            },
-            barmode='group',
-            height=450, # Increased height
-            width=700, 
-            plot_bgcolor='#f9f9f9',
-            font=dict(family="Arial", size=12, color="#7f7f7f"),
-            margin=dict(l=40, r=40, t=60, b=40), # Increased top margin for title
-            legend=dict(orientation="h", yanchor="top", y=-0.2, xanchor="center", x=0.5) # Positioned below plot
+        
+        table = html.Div(
+            [
+                html.H4(f'Gate Pass Details ({month})', style={'margin-top': '20px'}),
+                html.Table([
+                    html.Thead(html.Tr([html.Th(col) for col in month_data.columns])),
+                    html.Tbody([
+                        html.Tr([
+                            html.Td(month_data.iloc[i][col]) for col in month_data.columns
+                        ]) for i in range(len(month_data))
+                    ])
+                ], style={'width': '100%', 'border-collapse': 'collapse', 'margin-top': '10px'})
+            ]
         )
-        graphs.append(html.Div(dcc.Graph(figure=fig), style={'display': 'inline-block', 'margin': '10px'}))
-
-    return styles + [graphs]
-
-
-# Generate the month buttons for PM01, PM02, Breakdown, Shutdown, and Vibration Monitoring
-update_pm_graphs(pm01_df, 'pm01')
-update_pm_graphs(pm02_df, 'pm02')
+        tables.append(table)
+    
+    return styles + [tables]
 
 
-# App layout with dynamic routing
+# Main Layout and URL routing callback
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    dcc.Store(id='chat-store', data=[]), # Centralized chat history
-    # New: dcc.Store for chatbot state (minimized/maximized) for each instance
-    dcc.Store(id={'type': 'chatbot-state-store', 'index': 'home'}, data={'is_minimized': False}),
-    dcc.Store(id={'type': 'chatbot-state-store', 'index': 'dashboard'}, data={'is_minimized': False}),
     html.Div(id='page-content'),
-    
-    # Draggable Chatbot Container with id for JavaScript
-    html.Div(
-        id='chatbot-draggable', # This ID is used by the JavaScript for dragging
-        children=[
-            chatbot_main_ui('home'),
-            chatbot_avatar_ui('home'),
-            chatbot_main_ui('dashboard'),
-            chatbot_avatar_ui('dashboard')
-        ],
-        style={
-            'position': 'fixed', # Important for draggable
-            'bottom': '20px',
-            'right': '20px',
-            'zIndex': '1000'
-        }
-    ),
-    
-    # CSS for the heading animation injected via dcc.Markdown
-    dcc.Markdown("""
-        <style>
-            .animated-heading-word {
-                display: inline-block; /* Crucial for transform to work on span elements */
-                transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-                cursor: pointer; /* Indicate interactivity */
-                padding: 5px 8px; /* Added padding to make the box-shadow more visible around the text */
-                border-radius: 8px; /* Rounded corners for the box-shadow */
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle initial shadow for depth */
-            }
-            .animated-heading-word:hover {
-                transform: scale(1.1); /* Slightly scale up on hover */
-                /* Enhanced white glow effect */
-                box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.5); 
-            }
-        </style>
-    """, dangerously_allow_html=True), # IMPORTANT: allows raw HTML to be rendered
-
-    # JavaScript for draggable functionality
-    html.Script("""
-        document.addEventListener('DOMContentLoaded', function () {
-            const chatbot = document.getElementById('chatbot-draggable');
-            if (chatbot) {
-                chatbot.style.position = 'fixed';
-                chatbot.style.zIndex = 9999;
-
-                let offsetX = 0, offsetY = 0, initialX, initialY;
-                let isDragging = false;
-
-                // Make the header (first child of chatbot) the draggable handle
-                const header = chatbot.querySelector('div'); // Assuming the first div is the header
-                if (header) {
-                    header.style.cursor = 'grab'; // Indicate it's draggable
-                    header.addEventListener('mousedown', (e) => {
-                        isDragging = true;
-                        initialX = e.clientX;
-                        initialY = e.clientY;
-                        offsetX = chatbot.offsetLeft;
-                        offsetY = chatbot.offsetTop;
-                        e.preventDefault(); // Prevent text selection etc.
-                    });
-                }
-
-                document.addEventListener('mousemove', (e) => {
-                    if (!isDragging) return;
-                    // Calculate new position based on mouse movement relative to initial click
-                    const dx = e.clientX - initialX;
-                    const dy = e.clientY - initialY;
-
-                    // Update chatbot's position
-                    chatbot.style.left = offsetX + dx + 'px';
-                    chatbot.style.top = offsetY + dy + 'px';
-                });
-
-                document.addEventListener('mouseup', () => {
-                    isDragging = false;
-                });
-            }
-        });
-    """)
+    dcc.Store(id='chat-messages-store', data=[]), # Store for chat history
+    dcc.Store(id='chat-state-store', data={'is_minimized': True}), # Store for chatbot state
+    html.Div(id='chatbot-ui-container', children=[
+        chatbot_main_ui('main'),
+        chatbot_avatar_ui('main')
+    ])
 ])
 
-# Routing callback (now only updates page-content)
-@app.callback(
-    Output('page-content', 'children'),
-    [Input('url', 'pathname')]
-)
+@app.callback(Output('page-content', 'children'),
+              [Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == '/':
-        return home_layout
-    elif pathname == '/main-dashboard':
+    if pathname == '/main-dashboard':
         return main_dashboard_layout
     elif pathname == '/pm01':
         return pm01_layout
@@ -1400,243 +1175,140 @@ def display_page(pathname):
         return shutdown_layout
     elif pathname == '/vibration':
         return vibration_layout
-    elif pathname == '/lubeoil': # New route
+    elif pathname == '/lubeoil':
         return lubeoil_layout
-    elif pathname == '/spares': # New route
+    elif pathname == '/spares':
         return spares_layout
-    elif pathname == '/contracts': # New route
+    elif pathname == '/contracts':
         return contracts_layout
-    elif pathname == '/gatepass': # New route
+    elif pathname == '/gatepass':
         return gatepass_layout
+    elif pathname == '/chatbot-clusters':
+        return chatbot_clusters_layout
     else:
-        # Fallback to home layout if path is unrecognized
         return home_layout
 
-# New: Combined callback to manage the state (minimized/maximized) of each chatbot instance
+# Chatbot callbacks
+# This callback manages the minimization/maximization of the chatbot widget
 @app.callback(
-    Output({'type': 'chatbot-state-store', 'index': MATCH}, 'data'),
-    [Input({'type': 'chatbot-minimize-button', 'index': MATCH}, 'n_clicks'),
-     Input({'type': 'chatbot-avatar', 'index': MATCH}, 'n_clicks')],
+    Output({'type': 'chatbot-container', 'index': ALL}, 'style'),
+    Output({'type': 'chatbot-avatar', 'index': ALL}, 'style'),
+    Output('chat-state-store', 'data'),
+    Input({'type': 'chatbot-minimize-button', 'index': ALL}, 'n_clicks'),
+    Input({'type': 'chatbot-avatar', 'index': ALL}, 'n_clicks'),
+    State('chat-state-store', 'data'),
     prevent_initial_call=True
 )
-def update_chatbot_state(minimize_n_clicks, avatar_n_clicks):
-    trigger_id = ctx.triggered_id
+def toggle_chatbot_visibility(minimize_clicks, avatar_clicks, state_data):
+    is_minimized = state_data['is_minimized']
     
-    if trigger_id is None:
-        return {'is_minimized': False}
-
-    if trigger_id['type'] == 'chatbot-minimize-button':
-        if minimize_n_clicks and minimize_n_clicks > 0:
-            return {'is_minimized': True}
+    # Determine if a button was clicked
+    button_id = ctx.triggered_id
+    if button_id and (isinstance(button_id, dict) and button_id['type'] == 'chatbot-minimize-button' or isinstance(button_id, dict) and button_id['type'] == 'chatbot-avatar'):
+        is_minimized = not is_minimized
     
-    elif trigger_id['type'] == 'chatbot-avatar':
-        if avatar_n_clicks and avatar_n_clicks > 0:
-            return {'is_minimized': False}
-            
-    return {'is_minimized': False}
+    state_data['is_minimized'] = is_minimized
 
-
-# Single callback to control all chatbot styles based on URL and state stores
-@app.callback(
-    [Output({'type': 'chatbot-container', 'index': 'home'}, 'style'),
-     Output({'type': 'chatbot-avatar', 'index': 'home'}, 'style'),
-     Output({'type': 'chatbot-container', 'index': 'dashboard'}, 'style'),
-     Output({'type': 'chatbot-avatar', 'index': 'dashboard'}, 'style')],
-    [Input('url', 'pathname'),
-     Input({'type': 'chatbot-state-store', 'index': 'home'}, 'data'),
-     Input({'type': 'chatbot-state-store', 'index': 'dashboard'}, 'data')]
-)
-def update_all_chatbot_styles(pathname, home_state, dashboard_state):
-    # Default styles for hidden elements
-    hidden_style = {'display': 'none'}
-
-    # Base styles for full chatbot UI (without display property)
-    base_full_chat_style = {
-        'width': '350px', 'position': 'fixed', 'bottom': '20px', 'right': '20px',
-        'backgroundColor': 'white', 'boxShadow': '0px 0px 15px rgba(0,0,0,0.2)',
-        'borderRadius': '10px', 'zIndex': '1000', 'overflow': 'hidden',
-        'display': 'flex', 'flexDirection': 'column', 'height': '450px'
+    container_style = {'display': 'none'} if is_minimized else {
+        'width': '350px',
+        'position': 'fixed',
+        'bottom': '20px',
+        'right': '20px',
+        'backgroundColor': 'white',
+        'boxShadow': '0px 0px 15px rgba(0,0,0,0.2)',
+        'borderRadius': '10px',
+        'zIndex': '1000',
+        'display': 'flex',
+        'flexDirection': 'column',
+        'height': '450px',
+        'overflow': 'hidden'
     }
 
-    # Base styles for avatar UI (without display property)
-    base_avatar_style = {
+    avatar_style = {'display': 'none'} if not is_minimized else {
         'width': '56px',
         'height': '56px',
-        'borderRadius': '50%', # Makes it a circle
-        'backgroundColor': '#007bff', # gail-blue approximation
-        'color': 'white', # text color for the emoji
+        'borderRadius': '50%',
+        'backgroundColor': '#007bff',
+        'color': 'white',
         'border': 'none',
         'cursor': 'pointer',
         'position': 'fixed',
         'bottom': '20px',
         'right': '20px',
         'zIndex': '1001',
-        'boxShadow': '0 4px 12px rgba(0,0,0,0.2)', # shadow-lg approximation
-        'display': 'flex', # To center the emoji
-        'justifyContent': 'center', # To center the emoji
-        'alignItems': 'center' # To center the emoji
+        'boxShadow': '0 4px 12px rgba(0,0,0,0.2)',
+        'display': 'flex',
+        'justifyContent': 'center',
+        'alignItems': 'center'
     }
 
-    # Initialize all output styles to hidden
-    home_container_output_style = hidden_style
-    home_avatar_output_style = hidden_style
-    dashboard_container_output_style = hidden_style
-    dashboard_avatar_output_style = hidden_style
+    return [container_style] * len(minimize_clicks), [avatar_style] * len(avatar_clicks), state_data
 
-    # Determine styles for home chatbot based on URL and its state
-    if pathname == '/':
-        is_home_minimized = home_state.get('is_minimized', False)
-        if is_home_minimized:
-            home_container_output_style = {**base_full_chat_style, 'display': 'none'}
-            home_avatar_output_style = {**base_avatar_style, 'display': 'flex'} # Use flex for centering content
-        else:
-            home_container_output_style = {**base_full_chat_style, 'display': 'flex'} # Use flex for column layout
-            home_avatar_output_style = {**base_avatar_style, 'display': 'none'}
-
-    # Determine styles for dashboard chatbot based on URL and its state
-    elif pathname == '/main-dashboard':
-        is_dashboard_minimized = dashboard_state.get('is_minimized', False)
-        if is_dashboard_minimized:
-            dashboard_container_output_style = {**base_full_chat_style, 'display': 'none'}
-            dashboard_avatar_output_style = {**base_avatar_style, 'display': 'flex'} # Use flex for centering content
-        else:
-            dashboard_container_output_style = {**base_full_chat_style, 'display': 'flex'} # Use flex for column layout
-            dashboard_avatar_output_style = {**base_avatar_style, 'display': 'none'}
-
-    # For any other sub-page, hide both chatbots.
-    else: 
-        home_container_output_style = hidden_style
-        home_avatar_output_style = hidden_style
-        dashboard_container_output_style = hidden_style
-        dashboard_avatar_output_style = hidden_style
-
-    return home_container_output_style, home_avatar_output_style, \
-           dashboard_container_output_style, dashboard_avatar_output_style
-
-
-# Callback to process user input and update chat history in dcc.Store
+# This callback handles the chat messages
 @app.callback(
-    Output('chat-store', 'data'),
-    Output({'type': 'chat-input', 'index': ALL}, 'value'), # To clear input after sending for ALL chat inputs
-    Input({'type': 'chat-submit', 'index': ALL}, 'n_clicks'),
-    Input({'type': 'chat-clear', 'index': ALL}, 'n_clicks'),
+    Output({'type': 'chat-response', 'index': ALL}, 'children'),
+    Output({'type': 'chat-input', 'index': ALL}, 'value'),
+    Output('chat-messages-store', 'data'),
+    [
+        Input({'type': 'chat-submit', 'index': ALL}, 'n_clicks'),
+        Input({'type': 'chat-clear', 'index': ALL}, 'n_clicks'),
+    ],
     State({'type': 'chat-input', 'index': ALL}, 'value'),
-    State({'type': 'chat-input', 'index': ALL}, 'id'), # New: Get the IDs of the chat inputs
-    State('chat-store', 'data'),
+    State('chat-messages-store', 'data'),
     prevent_initial_call=True
 )
-def process_chat_actions(submit_clicks, clear_clicks, all_user_inputs, all_user_input_ids, store_data):
-    chat_history = store_data if store_data is not None else []
-    
+def update_chat_history(submit_clicks, clear_clicks, user_input_list, stored_messages):
     triggered_id = ctx.triggered_id
     
-    # Initialize all input values to empty string for clearing
-    num_chat_inputs = len(all_user_inputs)
-    input_values_to_clear = [""] * num_chat_inputs
+    # Check if a clear button was clicked
+    if triggered_id and triggered_id['type'] == 'chat-clear' and sum(clear_clicks) > 0:
+        return [[]] * len(user_input_list), [''] * len(user_input_list), []
 
-    if not triggered_id:
-        # This case handles initial load or no interaction
-        return chat_history, input_values_to_clear
-
-    # Determine which specific button (submit or clear) was clicked and its numerical index
-    clicked_type = triggered_id.get('type')
-    clicked_source_index = triggered_id.get('index') # This is 'home' or 'dashboard'
-    
-    clicked_numerical_index = -1
-    # Iterate through the IDs of the chat inputs to find the numerical index corresponding to the triggered source index
-    for i, input_id_dict in enumerate(all_user_input_ids):
-        if input_id_dict['index'] == clicked_source_index:
-            clicked_numerical_index = i
-            break
-
-    if clicked_numerical_index == -1:
-        # This should ideally not happen if triggered_id is from our chat inputs
-        return chat_history, input_values_to_clear
-
-    # Handle clear action
-    if clicked_type == 'chat-clear':
-        # Clear the chat history
-        return [], input_values_to_clear
-
-    # Handle submit action (clicked_type == 'chat-submit')
-    user_input = all_user_inputs[clicked_numerical_index]
-    if user_input:
-        try:
+    # Check if a submit button was clicked and there is user input
+    if triggered_id and triggered_id['type'] == 'chat-submit' and sum(submit_clicks) > 0:
+        user_message = user_input_list[0]
+        if user_message.strip():
             # Append user message
-            chat_history.append({'role': 'user', 'content': user_input})
-
-            # Send message to Gemini and get response
-            response = chat_session.send_message(user_input)
-            gemini_response_text = response.text.strip()
-
-            # Append Gemini's response
-            chat_history.append({'role': 'gemini', 'content': gemini_response_text})
+            user_msg_element = html.Div(user_message, style={
+                'backgroundColor': '#dcf8c6', # Light green for user
+                'borderRadius': '10px',
+                'padding': '8px 12px',
+                'marginBottom': '5px',
+                'maxWidth': '80%',
+                'alignSelf': 'flex-end' # Align to the right
+            })
+            stored_messages.append({'speaker': 'user', 'text': user_message})
             
-            # Clear the specific input field that was used
-            input_values_to_clear[clicked_numerical_index] = ""
-
-        except Exception as e:
-            chat_history.append({'role': 'error', 'content': f"❌ Error: {str(e)}"})
-            # If there's an error, don't clear the input
-            input_values_to_clear[clicked_numerical_index] = user_input
-    else:
-        # If user input is empty, don't do anything but still clear the relevant input if it was submitted
-        input_values_to_clear[clicked_numerical_index] = ""
-    
-    return chat_history, input_values_to_clear
-
-# Callback to render chat messages from chat-store to specific chat-response divs
-@app.callback(
-    [Output({'type': 'chat-response', 'index': 'home'}, 'children'),
-     Output({'type': 'chat-response', 'index': 'dashboard'}, 'children')],
-    [Input('chat-store', 'data'),
-     Input('url', 'pathname')] # Add pathname as an input
-)
-def render_chat_history(store_data, pathname):
-    chat_history = store_data if store_data is not None else []
-    
-    rendered_chat_history_content = []
-    for message in chat_history:
-        if message['role'] == 'user':
-            rendered_chat_history_content.append(html.Div(message['content'], style={
-                'alignSelf': 'flex-end',
-                'background': '#dcf8c6',
-                'color': '#000',
-                'padding': '8px 12px',
+            # Get bot response using the chat session
+            response = chat_session.send_message(user_message).text
+            bot_msg_element = html.Div(response, style={
+                'backgroundColor': '#ffffff', # White for bot
                 'borderRadius': '10px',
-                'margin': '5px',
+                'padding': '8px 12px',
+                'marginBottom': '5px',
                 'maxWidth': '80%',
-                'wordWrap': 'break-word'
-            }))
-        elif message['role'] == 'gemini':
-            rendered_chat_history_content.append(html.Div(message['content'], style={
-                'alignSelf': 'flex-start',
-                'background': '#ffffff',
-                'color': '#000',
-                'padding': '8px 12px',
-                'borderRadius': '10px',
-                'margin': '5px',
-                'maxWidth': '80%',
-                'wordWrap': 'break-word'
-            }))
-        elif message['role'] == 'error':
-            rendered_chat_history_content.append(html.Div(message['content'], style={
-                'background': '#ffcdd2',
-                'padding': '8px 12px',
-                'borderRadius': '10px',
-                'margin': '5px',
-                'color': '#b71c1c'
-            }))
-    
-    # Conditionally return the chat history based on the current pathname
-    if pathname == '/': # Home page is active
-        return rendered_chat_history_content, [] # Update home chatbot, keep dashboard chatbot empty
-    elif pathname == '/main-dashboard': # Dashboard page is active
-        return [], rendered_chat_history_content # Keep home chatbot empty, update dashboard chatbot
-    else: # For other sub-pages (PM01, PM02, etc.), both chatbots are typically hidden by display_page callback
-        return [], [] # Keep both chatbots empty
+                'alignSelf': 'flex-start' # Align to the left
+            })
+            stored_messages.append({'speaker': 'bot', 'text': response})
 
+            # Create the list of message components from the stored data
+            chat_history_elements = [
+                html.Div(
+                    message['text'],
+                    style={
+                        'backgroundColor': '#dcf8c6' if message['speaker'] == 'user' else '#ffffff',
+                        'borderRadius': '10px',
+                        'padding': '8px 12px',
+                        'marginBottom': '5px',
+                        'maxWidth': '80%',
+                        'alignSelf': 'flex-end' if message['speaker'] == 'user' else 'flex-start'
+                    }
+                ) for message in stored_messages
+            ]
 
-# Run app
+            return [chat_history_elements] * len(user_input_list), [''] * len(user_input_list), stored_messages
+
+    return [[]] * len(user_input_list), [''] * len(user_input_list), stored_messages
+
 if __name__ == '__main__':
     app.run(debug=True)
